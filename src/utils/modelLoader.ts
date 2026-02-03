@@ -9,18 +9,16 @@ export async function loadModel(
   file: ModelFile,
   content: ArrayBuffer
 ): Promise<{ model: THREE.Group; components: ModelComponent[] }> {
-  const loader = getLoader(file.type);
-  
   switch (file.type) {
     case 'stl':
-      return loadSTL(content, loader as STLLoader);
+      return loadSTL(content, new STLLoader());
     case 'obj':
-      return loadOBJ(content, loader as OBJLoader);
+      return loadOBJ(content, new OBJLoader());
     case 'gltf':
     case 'glb':
-      return loadGLTF(content, loader as GLTFLoader);
+      return loadGLTF(content, new GLTFLoader());
     case 'ply':
-      return loadPLY(content, loader as PLYLoader);
+      return loadPLY(content, new PLYLoader());
     case 'step':
     case 'stp':
       return loadSTEP(content);
@@ -29,21 +27,7 @@ export async function loadModel(
   }
 }
 
-function getLoader(type: ModelFile['type']): THREE.Loader {
-  switch (type) {
-    case 'stl':
-      return new STLLoader();
-    case 'obj':
-      return new OBJLoader();
-    case 'gltf':
-    case 'glb':
-      return new GLTFLoader();
-    case 'ply':
-      return new PLYLoader();
-    default:
-      throw new Error(`No loader for type: ${type}`);
-  }
-}
+
 
 async function loadSTL(
   content: ArrayBuffer,
