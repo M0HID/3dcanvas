@@ -1,5 +1,6 @@
 import { useStore } from '../store/useStore';
 import MaterialEditor from './MaterialEditor';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function ComponentTree() {
   const { 
@@ -30,7 +31,7 @@ export default function ComponentTree() {
                 onClick={() => toggleComponentVisibility(component.id)}
                 title={component.visible ? 'Hide' : 'Show'}
               >
-                {component.visible ? '👁️' : '👁️‍🗨️'}
+                {component.visible ? <Eye size={16} /> : <EyeOff size={16} />}
               </button>
               <div
                 className="component-name"

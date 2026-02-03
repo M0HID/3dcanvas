@@ -6,6 +6,7 @@ import ModelViewer from './components/ModelViewer';
 import LoadingOverlay from './components/LoadingOverlay';
 import LandingPage from './components/LandingPage';
 import { useStore } from './store/useStore';
+import { Box } from 'lucide-react';
 import './App.css';
 
 function App() {
@@ -26,7 +27,7 @@ function App() {
     <div className="app">
       <header className="app-header">
         <div className="logo">
-          <span className="logo-icon">🧊</span>
+          <Box size={24} className="logo-icon" />
           <h1>3DCanvas</h1>
         </div>
         <div className="header-content">
@@ -48,7 +49,7 @@ function App() {
           ) : (
             <div className="empty-state">
               <div className="empty-state-content">
-                <span className="empty-icon">🎨</span>
+                <Box size={64} className="empty-icon" />
                 <h2>Welcome to 3DCanvas</h2>
                 <p>Select a file from the sidebar to view it</p>
               </div>

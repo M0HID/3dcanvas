@@ -43,9 +43,20 @@ function CameraController({ model }: { model: THREE.Group | null }) {
 }
 
 export default function ModelViewer() {
-  const { selectedFile, setModelComponents, setIsLoading, setError, modelComponents } = useStore();
+  const { selectedFile, setModelComponents, setIsLoading, setError, modelComponents, toggleComponentSelection } = useStore();
   const modelRef = useRef<THREE.Group | null>(null);
   const [currentModel, setCurrentModel] = useState<THREE.Group | null>(null);
+
+  const handleMeshClick = (event: any) => {
+    event.stopPropagation();
+    const clickedMesh = event.object;
+    
+    // Find the component that matches this mesh
+    const component = modelComponents.find(c => c.mesh === clickedMesh || c.mesh.uuid === clickedMesh.uuid);
+    if (component) {
+      toggleComponentSelection(component.id);
+    }
+  };
 
   useEffect(() => {
     if (!selectedFile) return;
@@ -117,10 +128,10 @@ export default function ModelViewer() {
           args={[20, 20]}
           cellSize={0.5}
           cellThickness={0.5}
-          cellColor="#6b7280"
+          cellColor="#6d28d9"
           sectionSize={2}
           sectionThickness={1}
-          sectionColor="#9ca3af"
+          sectionColor="#8b5cf6"
           fadeDistance={30}
           fadeStrength={1}
           followCamera={false}
@@ -128,7 +139,7 @@ export default function ModelViewer() {
         />
         
         {/* Model */}
-        {modelRef.current && <primitive object={modelRef.current} />}
+        {modelRef.current && <primitive object={modelRef.current} onClick={handleMeshClick} />}
       </Canvas>
     </div>
   );

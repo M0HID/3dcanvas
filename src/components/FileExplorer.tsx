@@ -1,4 +1,5 @@
 import { useStore } from '../store/useStore';
+import { Box, Settings, Gem, Sparkles, File } from 'lucide-react';
 
 export default function FileExplorer() {
   const { modelFiles, selectedFile, setSelectedFile } = useStore();
@@ -15,17 +16,18 @@ export default function FileExplorer() {
   };
 
   const getFileIcon = (type: string) => {
-    const icons: Record<string, string> = {
-      stl: '📦',
-      step: '⚙️',
-      stp: '⚙️',
-      obj: '🔷',
-      gltf: '✨',
-      glb: '✨',
-      ply: '◆',
-      '3mf': '🔶'
+    const iconMap: Record<string, any> = {
+      stl: Box,
+      step: Settings,
+      stp: Settings,
+      obj: Gem,
+      gltf: Sparkles,
+      glb: Sparkles,
+      ply: Gem,
+      '3mf': Box
     };
-    return icons[type] || '📄';
+    const IconComponent = iconMap[type] || File;
+    return <IconComponent size={18} />;
   };
 
   return (

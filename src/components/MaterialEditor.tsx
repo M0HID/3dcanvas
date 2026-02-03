@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useStore } from '../store/useStore';
 import * as THREE from 'three';
+import { Palette, ChevronDown, ChevronRight } from 'lucide-react';
 
 export default function MaterialEditor() {
   const { modelComponents } = useStore();
@@ -59,7 +60,9 @@ export default function MaterialEditor() {
         className="material-toggle"
         onClick={() => setIsOpen(!isOpen)}
       >
-        🎨 Material Editor {isOpen ? '▼' : '▶'}
+        <Palette size={18} />
+        Material Editor
+        {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
       </button>
       
       {isOpen && (

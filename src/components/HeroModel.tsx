@@ -30,11 +30,11 @@ function InteractiveShape({ mousePosition }: { mousePosition: { x: number; y: nu
       <mesh>
         <dodecahedronGeometry args={[1.5, 0]} />
         <meshStandardMaterial
-          color="#8b5cf6"
-          metalness={0.8}
-          roughness={0.2}
-          emissive="#6d28d9"
-          emissiveIntensity={0.3}
+          color="#a78bfa"
+          metalness={0.3}
+          roughness={0.15}
+          emissive="#8b5cf6"
+          emissiveIntensity={0.5}
         />
       </mesh>
       
@@ -43,12 +43,12 @@ function InteractiveShape({ mousePosition }: { mousePosition: { x: number; y: nu
         <icosahedronGeometry args={[1.5, 0]} />
         <meshStandardMaterial
           color="#c084fc"
-          metalness={0.9}
+          metalness={0.4}
           roughness={0.1}
-          emissive="#a78bfa"
-          emissiveIntensity={0.8}
+          emissive="#c084fc"
+          emissiveIntensity={1.2}
           transparent
-          opacity={0.7}
+          opacity={0.8}
         />
       </mesh>
 
@@ -56,10 +56,10 @@ function InteractiveShape({ mousePosition }: { mousePosition: { x: number; y: nu
       <mesh scale={1.1}>
         <icosahedronGeometry args={[1.5, 1]} />
         <meshBasicMaterial
-          color="#e9d5ff"
+          color="#f3e8ff"
           wireframe
           transparent
-          opacity={0.2}
+          opacity={0.4}
         />
       </mesh>
 
@@ -67,18 +67,18 @@ function InteractiveShape({ mousePosition }: { mousePosition: { x: number; y: nu
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[2, 0.02, 16, 100]} />
         <meshBasicMaterial
-          color="#a78bfa"
+          color="#c084fc"
           transparent
-          opacity={0.3}
+          opacity={0.5}
         />
       </mesh>
 
       <mesh rotation={[0, Math.PI / 2, 0]}>
         <torusGeometry args={[2.2, 0.015, 16, 100]} />
         <meshBasicMaterial
-          color="#c084fc"
+          color="#e9d5ff"
           transparent
-          opacity={0.2}
+          opacity={0.4}
         />
       </mesh>
     </group>
@@ -102,10 +102,12 @@ export default function HeroModel() {
       onMouseMove={handleMouseMove}
     >
       <Canvas camera={{ position: [0, 0, 6], fov: 50 }}>
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={1} color="#ffffff" />
-        <pointLight position={[-10, -10, -5]} color="#8b5cf6" intensity={1} />
-        <pointLight position={[5, 5, 5]} color="#a78bfa" intensity={0.5} />
+        <ambientLight intensity={0.8} />
+        <directionalLight position={[10, 10, 5]} intensity={1.5} color="#ffffff" />
+        <directionalLight position={[-5, -5, -5]} intensity={0.8} color="#a78bfa" />
+        <pointLight position={[-10, -10, -5]} color="#8b5cf6" intensity={1.5} />
+        <pointLight position={[5, 5, 5]} color="#c084fc" intensity={1} />
+        <spotLight position={[0, 10, 0]} intensity={1} color="#e9d5ff" />
         <Environment preset="city" />
         <InteractiveShape mousePosition={mousePosition} />
       </Canvas>

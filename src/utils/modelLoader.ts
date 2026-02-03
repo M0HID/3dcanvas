@@ -37,9 +37,9 @@ async function loadSTL(
     try {
       const geometry = loader.parse(content);
       const material = new THREE.MeshStandardMaterial({ 
-        color: 0x606060,
-        metalness: 0.3,
-        roughness: 0.4,
+        color: 0xc084fc,
+        metalness: 0.2,
+        roughness: 0.5,
         flatShading: false
       });
       const mesh = new THREE.Mesh(geometry, material);
@@ -84,9 +84,9 @@ async function loadOBJ(
         if (child instanceof THREE.Mesh) {
           if (!child.material) {
             child.material = new THREE.MeshStandardMaterial({ 
-              color: 0x606060,
-              metalness: 0.3,
-              roughness: 0.4
+              color: 0xc084fc,
+              metalness: 0.2,
+              roughness: 0.5
             });
           }
           
@@ -244,11 +244,11 @@ async function loadSTEP(
         }
         
         // Create material with color from STEP file if available
-        const color = meshData.color || 0x808080;
+        const color = meshData.color || 0xc084fc;
         const material = new THREE.MeshStandardMaterial({
           color: color,
-          metalness: 0.3,
-          roughness: 0.4,
+          metalness: 0.2,
+          roughness: 0.5,
           side: THREE.DoubleSide,
           flatShading: false
         });
