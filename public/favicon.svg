@@ -14,19 +14,19 @@
     </linearGradient>
   </defs>
   
-  <!-- Low-poly geometric shape -->
+  <!-- Low-poly geometric shape - larger size -->
   <!-- Back face -->
-  <polygon points="50,15 80,35 70,60 30,60 20,35" fill="url(#grad2)" opacity="0.8"/>
+  <polygon points="50,5 90,30 75,70 25,70 10,30" fill="url(#grad2)" opacity="0.8"/>
   
   <!-- Left face -->
-  <polygon points="50,15 20,35 30,60 50,75" fill="url(#grad1)"/>
+  <polygon points="50,5 10,30 25,70 50,90" fill="url(#grad1)"/>
   
   <!-- Right face -->
-  <polygon points="50,15 80,35 70,60 50,75" fill="url(#grad3)"/>
+  <polygon points="50,5 90,30 75,70 50,90" fill="url(#grad3)"/>
   
   <!-- Bottom face -->
-  <polygon points="30,60 50,75 70,60" fill="url(#grad2)" opacity="0.6"/>
+  <polygon points="25,70 50,90 75,70" fill="url(#grad2)" opacity="0.6"/>
   
   <!-- Top highlight -->
-  <polygon points="50,15 35,25 50,35 65,25" fill="#ffffff" opacity="0.3"/>
+  <polygon points="50,5 30,20 50,35 70,20" fill="#ffffff" opacity="0.3"/>
 </svg>
