@@ -1,13 +1,26 @@
+import { useState } from 'react';
 import UrlInput from './components/UrlInput';
 import FileExplorer from './components/FileExplorer';
 import ComponentTree from './components/ComponentTree';
 import ModelViewer from './components/ModelViewer';
 import LoadingOverlay from './components/LoadingOverlay';
+import LandingPage from './components/LandingPage';
 import { useStore } from './store/useStore';
 import './App.css';
 
 function App() {
   const { modelFiles, selectedFile } = useStore();
+  const [showViewer, setShowViewer] = useState(false);
+
+  // Show landing page if no models loaded yet
+  if (!showViewer && modelFiles.length === 0) {
+    return (
+      <>
+        <LandingPage onLoaded={() => setShowViewer(true)} />
+        <LoadingOverlay />
+      </>
+    );
+  }
 
   return (
     <div className="app">
@@ -37,18 +50,7 @@ function App() {
               <div className="empty-state-content">
                 <span className="empty-icon">🎨</span>
                 <h2>Welcome to 3DCanvas</h2>
-                <p>Paste a GitHub URL containing 3D models to get started</p>
-                <div className="supported-formats">
-                  <strong>Supported formats:</strong>
-                  <div className="format-tags">
-                    <span className="format-tag">STL</span>
-                    <span className="format-tag">STEP</span>
-                    <span className="format-tag">OBJ</span>
-                    <span className="format-tag">GLTF</span>
-                    <span className="format-tag">GLB</span>
-                    <span className="format-tag">PLY</span>
-                  </div>
-                </div>
+                <p>Select a file from the sidebar to view it</p>
               </div>
             </div>
           )}
