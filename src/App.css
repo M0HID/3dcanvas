@@ -24,10 +24,12 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
@@ -673,9 +675,10 @@ body {
 
 .hero-title {
   font-size: 5rem;
-  font-weight: 800;
+  font-weight: 900;
   margin-bottom: 1rem;
   line-height: 1;
+  letter-spacing: -0.03em;
 }
 
 .gradient-text {
@@ -690,14 +693,16 @@ body {
   font-size: 1.5rem;
   color: var(--text-primary);
   margin-bottom: 1rem;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .hero-description {
   font-size: 1.125rem;
   color: var(--text-secondary);
   margin-bottom: 2.5rem;
-  line-height: 1.6;
+  line-height: 1.7;
+  letter-spacing: -0.01em;
 }
 
 .input-section {
