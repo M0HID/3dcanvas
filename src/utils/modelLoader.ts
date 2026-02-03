@@ -191,12 +191,101 @@ async function loadPLY(
 }
 
 async function loadSTEP(
-  _content: ArrayBuffer
+  content: ArrayBuffer
 ): Promise<{ model: THREE.Group; components: ModelComponent[] }> {
-  // STEP file parsing requires complex CAD libraries
-  // For now, we'll show an informative error message
-  throw new Error(
-    'STEP/STP files require a CAD converter. Please convert your STEP file to STL, OBJ, or GLTF format. ' +
-    'You can use free tools like FreeCAD, Blender, or online converters like https://www.cadexchanger.com/'
-  );
+  try {
+    // Dynamically import occt-import-js
+    const occtImportJS = await import('occt-import-js');
+    
+    // Initialize the OCCT module
+    const occt = await occtImportJS.default();
+    
+    // Convert ArrayBuffer to Uint8Array
+    const fileBuffer = new Uint8Array(content);
+    
+    // Read the STEP file
+    const result = occt.ReadStepFile(fileBuffer, null);
+    
+    if (!result.success || !result.meshes || result.meshes.length === 0) {
+      throw new Error('Failed to parse STEP file or no geometry found');
+    }
+    
+    const group = new THREE.Group();
+    const components: ModelComponent[] = [];
+    
+    // Process each mesh from the STEP file
+    result.meshes.forEach((meshData: any, idx: number) => {
+      try {
+        const geometry = new THREE.BufferGeometry();
+        
+        // Set position attribute
+        if (meshData.attributes && meshData.attributes.position) {
+          const positions = meshData.attributes.position.array;
+          geometry.setAttribute(
+            'position',
+            new THREE.Float32BufferAttribute(positions, 3)
+          );
+        }
+        
+        // Set normal attribute
+        if (meshData.attributes && meshData.attributes.normal) {
+          const normals = meshData.attributes.normal.array;
+          geometry.setAttribute(
+            'normal',
+            new THREE.Float32BufferAttribute(normals, 3)
+          );
+        } else {
+          geometry.computeVertexNormals();
+        }
+        
+        // Set index
+        if (meshData.index && meshData.index.array) {
+          geometry.setIndex(new THREE.Uint32BufferAttribute(meshData.index.array, 1));
+        }
+        
+        // Create material with color from STEP file if available
+        const color = meshData.color || 0x808080;
+        const material = new THREE.MeshStandardMaterial({
+          color: color,
+          metalness: 0.3,
+          roughness: 0.4,
+          side: THREE.DoubleSide,
+          flatShading: false
+        });
+        
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.name = meshData.name || `Part ${idx + 1}`;
+        
+        group.add(mesh);
+        
+        components.push({
+          id: `step-${idx}`,
+          name: mesh.name,
+          mesh: mesh,
+          visible: true,
+          selected: false
+        });
+      } catch (meshError) {
+        console.warn(`Failed to process mesh ${idx}:`, meshError);
+      }
+    });
+    
+    if (group.children.length === 0) {
+      throw new Error('No valid geometry could be extracted from STEP file');
+    }
+    
+    // Center the model
+    const box = new THREE.Box3().setFromObject(group);
+    const center = box.getCenter(new THREE.Vector3());
+    group.position.sub(center);
+    
+    return { model: group, components };
+    
+  } catch (error) {
+    console.error('STEP loading error:', error);
+    throw new Error(
+      `Failed to load STEP file: ${error instanceof Error ? error.message : 'Unknown error'}. ` +
+      'The file may be corrupted or in an unsupported format.'
+    );
+  }
 }
