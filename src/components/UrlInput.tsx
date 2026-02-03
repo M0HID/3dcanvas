@@ -87,6 +87,15 @@ export default function UrlInput() {
     }
   };
 
+  const handleInputPaste = async (e: React.ClipboardEvent) => {
+    const pastedText = e.clipboardData?.getData('text');
+    if (pastedText && isGithubUrl(pastedText)) {
+      setInputValue(pastedText);
+      // Small delay to ensure state updates
+      setTimeout(() => handleSubmit(pastedText), 0);
+    }
+  };
+
   return (
     <div className="url-input-container">
       <div className="url-input-wrapper">
@@ -98,6 +107,7 @@ export default function UrlInput() {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
+          onPaste={handleInputPaste}
         />
         <button 
           className="submit-button"

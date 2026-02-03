@@ -194,17 +194,17 @@ async function loadSTEP(
   content: ArrayBuffer
 ): Promise<{ model: THREE.Group; components: ModelComponent[] }> {
   try {
-    // Dynamically import occt-import-js
-    const occtImportJS = await import('occt-import-js');
+    // Import the OCCT wrapper
+    const { getOcctInstance } = await import('./occtLoader');
     
-    // Initialize the OCCT module
-    const occt = await occtImportJS.default();
+    // Get the initialized OCCT module
+    const occt = await getOcctInstance();
     
     // Convert ArrayBuffer to Uint8Array
     const fileBuffer = new Uint8Array(content);
     
     // Read the STEP file
-    const result = occt.ReadStepFile(fileBuffer, null);
+    const result = occt.ReadStepFile(fileBuffer);
     
     if (!result.success || !result.meshes || result.meshes.length === 0) {
       throw new Error('Failed to parse STEP file or no geometry found');
