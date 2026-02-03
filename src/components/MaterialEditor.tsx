@@ -3,8 +3,9 @@ import { useStore } from '../store/useStore';
 import * as THREE from 'three';
 
 export default function MaterialEditor() {
-  const { modelComponents, setModelComponents } = useStore();
+  const { modelComponents } = useStore();
   const [isOpen, setIsOpen] = useState(false);
+  const [, forceUpdate] = useState({});
 
   const selectedComponent = modelComponents.find(c => c.selected);
 
@@ -14,32 +15,40 @@ export default function MaterialEditor() {
 
   const material = selectedComponent.mesh.material as THREE.MeshStandardMaterial;
 
+  const triggerUpdate = () => {
+    forceUpdate({});
+  };
+
   const handleColorChange = (color: string) => {
     material.color.set(color);
+    triggerUpdate();
   };
 
   const handleMetalnessChange = (value: number) => {
     material.metalness = value;
+    triggerUpdate();
   };
 
   const handleRoughnessChange = (value: number) => {
     material.roughness = value;
+    triggerUpdate();
   };
 
   const handleOpacityChange = (value: number) => {
     material.opacity = value;
     material.transparent = value < 1;
+    triggerUpdate();
   };
 
   const handleWireframeToggle = () => {
     material.wireframe = !material.wireframe;
-    setModelComponents([...modelComponents]); // Force re-render
+    triggerUpdate();
   };
 
   const handleFlatShadingToggle = () => {
     material.flatShading = !material.flatShading;
     material.needsUpdate = true;
-    setModelComponents([...modelComponents]); // Force re-render
+    triggerUpdate();
   };
 
   const colorHex = '#' + material.color.getHexString();
