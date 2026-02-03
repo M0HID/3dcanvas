@@ -191,91 +191,12 @@ async function loadPLY(
 }
 
 async function loadSTEP(
-  content: ArrayBuffer
+  _content: ArrayBuffer
 ): Promise<{ model: THREE.Group; components: ModelComponent[] }> {
-  try {
-    // For STEP files, we'll use occt-import-js
-    // This is a placeholder - STEP parsing is complex
-    const occt = await import('occt-import-js');
-    
-    // Initialize OCCT
-    const occModule = await occt.default();
-    
-    // Parse STEP file
-    const fileBuffer = new Uint8Array(content);
-    const result = occModule.ReadStepFile(fileBuffer, null);
-    
-    if (!result.success) {
-      throw new Error('Failed to parse STEP file');
-    }
-    
-    const group = new THREE.Group();
-    const components: ModelComponent[] = [];
-    
-    // Convert OCCT shapes to Three.js meshes
-    result.meshes.forEach((meshData: any, idx: number) => {
-      const geometry = new THREE.BufferGeometry();
-      
-      geometry.setAttribute(
-        'position',
-        new THREE.Float32BufferAttribute(meshData.attributes.position.array, 3)
-      );
-      
-      if (meshData.attributes.normal) {
-        geometry.setAttribute(
-          'normal',
-          new THREE.Float32BufferAttribute(meshData.attributes.normal.array, 3)
-        );
-      }
-      
-      if (meshData.index) {
-        geometry.setIndex(new THREE.Uint32BufferAttribute(meshData.index.array, 1));
-      }
-      
-      const material = new THREE.MeshStandardMaterial({
-        color: meshData.color || 0x606060,
-        metalness: 0.3,
-        roughness: 0.4,
-        side: THREE.DoubleSide
-      });
-      
-      const mesh = new THREE.Mesh(geometry, material);
-      mesh.name = meshData.name || `Part ${idx}`;
-      group.add(mesh);
-      
-      components.push({
-        id: `step-${idx}`,
-        name: mesh.name,
-        mesh: mesh,
-        visible: true,
-        selected: false
-      });
-    });
-    
-    // Center the model
-    const box = new THREE.Box3().setFromObject(group);
-    const center = box.getCenter(new THREE.Vector3());
-    group.position.sub(center);
-    
-    return { model: group, components };
-  } catch (error) {
-    console.error('Error loading STEP file:', error);
-    // Fallback: create a simple placeholder
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-    const mesh = new THREE.Mesh(geometry, material);
-    const group = new THREE.Group();
-    group.add(mesh);
-    
-    return {
-      model: group,
-      components: [{
-        id: 'step-error',
-        name: 'STEP Load Error',
-        mesh: mesh,
-        visible: true,
-        selected: false
-      }]
-    };
-  }
+  // STEP file parsing requires complex CAD libraries
+  // For now, we'll show an informative error message
+  throw new Error(
+    'STEP/STP files require a CAD converter. Please convert your STEP file to STL, OBJ, or GLTF format. ' +
+    'You can use free tools like FreeCAD, Blender, or online converters like https://www.cadexchanger.com/'
+  );
 }

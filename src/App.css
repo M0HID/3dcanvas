@@ -406,6 +406,13 @@ body {
   border: 1px solid var(--border-color);
 }
 
+.format-note {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
 /* Loading Overlay */
 .loading-overlay {
   position: fixed;

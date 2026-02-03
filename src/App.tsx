@@ -42,13 +42,13 @@ function App() {
                   <strong>Supported formats:</strong>
                   <div className="format-tags">
                     <span className="format-tag">STL</span>
-                    <span className="format-tag">STEP</span>
                     <span className="format-tag">OBJ</span>
                     <span className="format-tag">GLTF</span>
                     <span className="format-tag">GLB</span>
                     <span className="format-tag">PLY</span>
-                    <span className="format-tag">3MF</span>
+                    <span className="format-tag">STEP*</span>
                   </div>
+                  <p className="format-note">*STEP files require conversion to STL/OBJ/GLTF</p>
                 </div>
               </div>
             </div>
