@@ -1,4 +1,5 @@
 import { useStore } from '../store/useStore';
+import MaterialEditor from './MaterialEditor';
 
 export default function ComponentTree() {
   const { 
@@ -41,6 +42,7 @@ export default function ComponentTree() {
           </div>
         ))}
       </div>
+      <MaterialEditor />
     </div>
   );
 }

@@ -1,14 +1,51 @@
-import { useEffect, useRef } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { useEffect, useRef, useState } from 'react';
+import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Environment, Grid } from '@react-three/drei';
 import * as THREE from 'three';
 import { useStore } from '../store/useStore';
 import { fetchFileContent } from '../utils/github';
 import { loadModel } from '../utils/modelLoader';
 
+function CameraController({ model }: { model: THREE.Group | null }) {
+  const { camera, controls } = useThree();
+
+  useEffect(() => {
+    if (!model || !controls) return;
+
+    // Calculate bounding box
+    const box = new THREE.Box3().setFromObject(model);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+
+    // Calculate the distance needed to fit the entire model
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const fov = (camera as THREE.PerspectiveCamera).fov * (Math.PI / 180);
+    let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
+
+    // Add some padding (multiply by 1.5 for better initial view)
+    cameraZ *= 1.5;
+
+    // Position camera
+    camera.position.set(cameraZ, cameraZ, cameraZ);
+    camera.lookAt(center);
+
+    // Update controls target to model center
+    if (controls && 'target' in controls) {
+      (controls as any).target.copy(center);
+      (controls as any).update();
+    }
+
+    // Update camera
+    camera.updateProjectionMatrix();
+  }, [model, camera, controls]);
+
+  return null;
+}
+
 export default function ModelViewer() {
   const { selectedFile, setModelComponents, setIsLoading, setError, modelComponents } = useStore();
   const modelRef = useRef<THREE.Group | null>(null);
+  const [currentModel, setCurrentModel] = useState<THREE.Group | null>(null);
 
   useEffect(() => {
     if (!selectedFile) return;
@@ -25,6 +62,7 @@ export default function ModelViewer() {
 
         if (isMounted) {
           modelRef.current = model;
+          setCurrentModel(model);
           setModelComponents(components);
           setIsLoading(false);
         }
@@ -58,6 +96,7 @@ export default function ModelViewer() {
       <Canvas shadows>
         <PerspectiveCamera makeDefault position={[5, 5, 5]} />
         <OrbitControls makeDefault />
+        <CameraController model={currentModel} />
         
         {/* Lighting */}
         <ambientLight intensity={0.5} />

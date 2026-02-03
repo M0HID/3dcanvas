@@ -94,13 +94,11 @@ export const useStore = create<AppState>((set) => ({
   })),
   
   toggleComponentSelection: (id: string) => set((state) => {
-    const isSelected = state.selectedComponents.includes(id);
+    const isSelected = state.modelComponents.find(c => c.id === id)?.selected;
     return {
-      selectedComponents: isSelected
-        ? state.selectedComponents.filter(cId => cId !== id)
-        : [...state.selectedComponents, id],
+      selectedComponents: isSelected ? [] : [id],
       modelComponents: state.modelComponents.map(comp =>
-        comp.id === id ? { ...comp, selected: !comp.selected } : comp
+        ({ ...comp, selected: comp.id === id ? !comp.selected : false })
       )
     };
   }),
