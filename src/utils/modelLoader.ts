@@ -3,6 +3,7 @@ import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js';
+import { ThreeMFLoader } from 'three/examples/jsm/loaders/3MFLoader.js';
 import type { ModelFile, ModelComponent } from '../store/useStore';
 
 export async function loadModel(
@@ -19,6 +20,8 @@ export async function loadModel(
       return loadGLTF(content, new GLTFLoader());
     case 'ply':
       return loadPLY(content, new PLYLoader());
+    case '3mf':
+      return load3MF(content, new ThreeMFLoader());
     case 'step':
     case 'stp':
       return loadSTEP(content);
@@ -38,8 +41,9 @@ async function loadSTL(
       const geometry = loader.parse(content);
       const material = new THREE.MeshStandardMaterial({ 
         color: 0xc084fc,
-        metalness: 0.2,
-        roughness: 0.5,
+        metalness: 0.1,
+        roughness: 0.7,
+        side: THREE.DoubleSide,
         flatShading: false
       });
       const mesh = new THREE.Mesh(geometry, material);
@@ -82,13 +86,13 @@ async function loadOBJ(
       
       object.traverse((child) => {
         if (child instanceof THREE.Mesh) {
-          if (!child.material) {
-            child.material = new THREE.MeshStandardMaterial({ 
-              color: 0xc084fc,
-              metalness: 0.2,
-              roughness: 0.5
-            });
-          }
+          // Always set our default purple material
+          child.material = new THREE.MeshStandardMaterial({ 
+            color: 0xc084fc,
+            metalness: 0.1,
+            roughness: 0.7,
+            side: THREE.DoubleSide
+          });
           
           components.push({
             id: `obj-${idx}`,
@@ -128,6 +132,14 @@ async function loadGLTF(
         
         scene.traverse((child) => {
           if (child instanceof THREE.Mesh) {
+            // Always set our default purple material
+            child.material = new THREE.MeshStandardMaterial({ 
+              color: 0xc084fc,
+              metalness: 0.1,
+              roughness: 0.7,
+              side: THREE.DoubleSide
+            });
+            
             components.push({
               id: `gltf-${idx}`,
               name: child.name || `Component ${idx}`,
@@ -159,9 +171,10 @@ async function loadPLY(
     try {
       const geometry = loader.parse(content);
       const material = new THREE.MeshStandardMaterial({ 
-        color: 0x606060,
-        metalness: 0.3,
-        roughness: 0.4,
+        color: 0xc084fc,
+        metalness: 0.1,
+        roughness: 0.7,
+        side: THREE.DoubleSide,
         vertexColors: true
       });
       const mesh = new THREE.Mesh(geometry, material);
@@ -184,6 +197,50 @@ async function loadPLY(
       }];
       
       resolve({ model: group, components });
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+async function load3MF(
+  content: ArrayBuffer,
+  loader: ThreeMFLoader
+): Promise<{ model: THREE.Group; components: ModelComponent[] }> {
+  return new Promise((resolve, reject) => {
+    try {
+      const object = loader.parse(content);
+      
+      const components: ModelComponent[] = [];
+      let idx = 0;
+      
+      object.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          // Always set our default purple material
+          child.material = new THREE.MeshStandardMaterial({ 
+            color: 0xc084fc,
+            metalness: 0.1,
+            roughness: 0.7,
+            side: THREE.DoubleSide
+          });
+          
+          components.push({
+            id: `3mf-${idx}`,
+            name: child.name || `Component ${idx}`,
+            mesh: child,
+            visible: true,
+            selected: false
+          });
+          idx++;
+        }
+      });
+      
+      // Center the model
+      const box = new THREE.Box3().setFromObject(object);
+      const center = box.getCenter(new THREE.Vector3());
+      object.position.sub(center);
+      
+      resolve({ model: object, components });
     } catch (error) {
       reject(error);
     }
@@ -247,8 +304,8 @@ async function loadSTEP(
         const color = meshData.color || 0xc084fc;
         const material = new THREE.MeshStandardMaterial({
           color: color,
-          metalness: 0.2,
-          roughness: 0.5,
+          metalness: 0.1,
+          roughness: 0.7,
           side: THREE.DoubleSide,
           flatShading: false
         });

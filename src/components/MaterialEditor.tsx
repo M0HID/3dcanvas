@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { Palette, ChevronDown, ChevronRight } from 'lucide-react';
 
 export default function MaterialEditor() {
-  const { modelComponents } = useStore();
+  const { modelComponents, showEdges, toggleEdges } = useStore();
   const [isOpen, setIsOpen] = useState(false);
   const [, forceUpdate] = useState({});
 
@@ -131,6 +131,17 @@ export default function MaterialEditor() {
                 onChange={handleFlatShadingToggle}
               />
               Flat Shading
+            </label>
+          </div>
+
+          <div className="material-section">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={showEdges}
+                onChange={toggleEdges}
+              />
+              Show Edge Outlines
             </label>
           </div>
         </div>

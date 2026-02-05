@@ -34,6 +34,7 @@ interface AppState {
   // Model viewer state
   modelComponents: ModelComponent[];
   selectedComponents: string[];
+  showEdges: boolean;
   
   // Actions
   setGithubUrl: (url: string) => void;
@@ -46,6 +47,7 @@ interface AppState {
   toggleComponentSelection: (id: string) => void;
   selectAllComponents: () => void;
   deselectAllComponents: () => void;
+  toggleEdges: () => void;
   reset: () => void;
 }
 
@@ -62,6 +64,7 @@ export const useStore = create<AppState>((set) => ({
   error: null,
   modelComponents: [],
   selectedComponents: [],
+  showEdges: true,
   
   // Actions
   setGithubUrl: (url: string) => {
@@ -113,6 +116,8 @@ export const useStore = create<AppState>((set) => ({
     modelComponents: []
   }),
   
+  toggleEdges: () => set((state) => ({ showEdges: !state.showEdges })),
+  
   reset: () => set({
     githubUrl: '',
     repoOwner: '',
@@ -124,7 +129,8 @@ export const useStore = create<AppState>((set) => ({
     isLoading: false,
     error: null,
     modelComponents: [],
-    selectedComponents: []
+    selectedComponents: [],
+    showEdges: true
   })
 }));
 

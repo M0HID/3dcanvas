@@ -11,7 +11,7 @@ function InteractiveShape({ mousePosition }: { mousePosition: { x: number; y: nu
 
     // Smooth rotation based on mouse position
     const targetRotationY = mousePosition.x * Math.PI * 0.3;
-    const targetRotationX = mousePosition.y * Math.PI * 0.3;
+    const targetRotationX = -mousePosition.y * Math.PI * 0.3;
 
     // Lerp for smooth animation
     groupRef.current.rotation.y += (targetRotationY - groupRef.current.rotation.y) * 0.1;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { isGithubUrl, fetchRepositoryFiles } from '../utils/github';
 import HeroModel from './HeroModel';
@@ -56,6 +56,90 @@ export default function LandingPage({ onLoaded }: { onLoaded: () => void }) {
     }
   };
 
+  // Add global paste listener
+  useEffect(() => {
+    const handlePaste = async (e: ClipboardEvent) => {
+      const pastedText = e.clipboardData?.getData('text');
+      if (pastedText && isGithubUrl(pastedText)) {
+        setInputValue(pastedText);
+        
+        // Auto-submit immediately with the pasted text
+        setIsLoading(true);
+        setError(null);
+        setGithubUrl(pastedText);
+        setGlobalLoading(true);
+        setGlobalError(null);
+
+        try {
+          await new Promise(resolve => setTimeout(resolve, 0));
+          const store = useStore.getState();
+          const files = await fetchRepositoryFiles(
+            store.repoOwner,
+            store.repoName,
+            store.repoBranch,
+            store.repoPath
+          );
+
+          if (files.length === 0) {
+            setError('No 3D model files found in this repository');
+            setIsLoading(false);
+          } else {
+            setModelFiles(files);
+            setGlobalLoading(false);
+            onLoaded();
+          }
+        } catch (error) {
+          console.error('Error fetching files:', error);
+          setError(error instanceof Error ? error.message : 'Failed to fetch files');
+          setIsLoading(false);
+          setGlobalLoading(false);
+        }
+      }
+    };
+
+    window.addEventListener('paste', handlePaste);
+    return () => window.removeEventListener('paste', handlePaste);
+  }, [setGithubUrl, setModelFiles, setGlobalLoading, setGlobalError, onLoaded]);
+
+  const handleInputPaste = async (e: React.ClipboardEvent) => {
+    const pastedText = e.clipboardData.getData('text');
+    if (pastedText && isGithubUrl(pastedText)) {
+      setInputValue(pastedText);
+      
+      // Auto-submit immediately with the pasted text
+      setIsLoading(true);
+      setError(null);
+      setGithubUrl(pastedText);
+      setGlobalLoading(true);
+      setGlobalError(null);
+
+      try {
+        await new Promise(resolve => setTimeout(resolve, 0));
+        const store = useStore.getState();
+        const files = await fetchRepositoryFiles(
+          store.repoOwner,
+          store.repoName,
+          store.repoBranch,
+          store.repoPath
+        );
+
+        if (files.length === 0) {
+          setError('No 3D model files found in this repository');
+          setIsLoading(false);
+        } else {
+          setModelFiles(files);
+          setGlobalLoading(false);
+          onLoaded();
+        }
+      } catch (error) {
+        console.error('Error fetching files:', error);
+        setError(error instanceof Error ? error.message : 'Failed to fetch files');
+        setIsLoading(false);
+        setGlobalLoading(false);
+      }
+    }
+  };
+
   return (
     <div className="landing-page">
       <div className="landing-container">
@@ -81,6 +165,7 @@ export default function LandingPage({ onLoaded }: { onLoaded: () => void }) {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyDown={handleKeyDown}
+                  onPaste={handleInputPaste}
                   disabled={isLoading}
                 />
                 <button 
@@ -125,6 +210,7 @@ export default function LandingPage({ onLoaded }: { onLoaded: () => void }) {
                 <span className="format-tag">GLTF</span>
                 <span className="format-tag">GLB</span>
                 <span className="format-tag">PLY</span>
+                <span className="format-tag">3MF</span>
               </div>
             </div>
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import UrlInput from './components/UrlInput';
 import FileExplorer from './components/FileExplorer';
 import ComponentTree from './components/ComponentTree';
@@ -10,8 +10,15 @@ import { Box } from 'lucide-react';
 import './App.css';
 
 function App() {
-  const { modelFiles, selectedFile } = useStore();
+  const { modelFiles, selectedFile, setSelectedFile } = useStore();
   const [showViewer, setShowViewer] = useState(false);
+
+  // Auto-select first file when files are loaded
+  useEffect(() => {
+    if (modelFiles.length > 0 && !selectedFile) {
+      setSelectedFile(modelFiles[0]);
+    }
+  }, [modelFiles, selectedFile, setSelectedFile]);
 
   // Show landing page if no models loaded yet
   if (!showViewer && modelFiles.length === 0) {
